@@ -7,14 +7,25 @@ import HeartFilledPath from "../assets/icons/heart-filled.svg";
 import { IconLoading } from "../assets/icons/IconLoading";
 
 const HeartOutline = () => {
-  return <img alt="" src={HeartOutlinePath} />;
+  return (
+    <img
+      alt=""
+      src={HeartOutlinePath}
+    />
+  );
 };
 
 const HeartFilled = () => {
-  return <img alt="" src={HeartFilledPath} />;
+  return (
+    <img
+      alt=""
+      src={HeartFilledPath}
+    />
+  );
 };
 
 export const HappyThought = ({
+  id,
   message,
   likes,
   timestamp,
@@ -34,19 +45,25 @@ export const HappyThought = ({
             <Skeleton width={50} />
           ) : (
             <>
+              <div
+                aria-live="polite"
+                className="sr-only"
+                lang="en"
+              >
+                <span
+                  id={`likeButtonText-${id}`}
+                  lang="en"
+                >
+                  {isAlreadyLiked
+                    ? "You like this happy thought. Click again to remove like."
+                    : "Like this happy thought"}
+                </span>
+              </div>
               <button
-                aria-label={
-                  isAlreadyLiked
-                    ? "You've liked this happy thought already :)"
-                    : "Like this happy thought"
-                }
+                aria-labelledby={`likeButtonText-${id}`}
                 onClick={onLike}
-                aria-disabled={isProcessing || isLoading || isAlreadyLiked}
-                className={
-                  isAlreadyLiked
-                    ? "happy-thought__like-btn is-disabled"
-                    : "happy-thought__like-btn"
-                }
+                aria-disabled={isProcessing || isLoading}
+                className="happy-thought__like-btn"
               >
                 {isProcessing ? (
                   <IconLoading color="black" />
@@ -57,15 +74,23 @@ export const HappyThought = ({
                 )}
               </button>
               <p>
-                <i>x</i>
-                {likes}
+                <span aria-hidden="true">x</span> {likes}{" "}
+                <span className="sr-only">
+                  &nbsp; {likes === 1 ? "like" : "likes"}
+                </span>
               </p>
             </>
           )}
         </div>
-        <div className="happy-thought__timestamp">
+        <div
+          lang="en"
+          className="happy-thought__timestamp"
+        >
           {isLoading ? (
-            <Skeleton width={100} containerClassName="skeleton-align-right" />
+            <Skeleton
+              width={100}
+              containerClassName="skeleton-align-right"
+            />
           ) : (
             timestamp && moment(timestamp).fromNow()
           )}

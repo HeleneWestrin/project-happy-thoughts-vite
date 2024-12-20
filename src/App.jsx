@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import useGet from "./hooks/useGet";
-import usePost from "./hooks/usePost";
+import usePut from "./hooks/usePut";
 import useLocalStorage from "./hooks/useLocalStorage";
 import { renderSkeletonLoader } from "./utils/renderSkeletonLoader";
 import { CreateHappyThought } from "./components/CreateHappyThought";
@@ -19,7 +19,7 @@ export const App = () => {
     data: happyThoughtsData,
     isLoading,
     error,
-  } = useGet("https://happy-thoughts-ux7hkzgmwa-uc.a.run.app/thoughts");
+  } = useGet("https://project-happy-thoughts-api-kappa.vercel.app/thoughts");
 
   // Update happyThoughts state when data is fetched
   useEffect(() => {
@@ -28,33 +28,45 @@ export const App = () => {
     }
   }, [happyThoughtsData]);
 
-  const { postData } = usePost();
+  const { putData } = usePut();
 
-  // Post request when user likes a happy thought
+  // PUT request when user likes a happy thought
   const handleLike = async (id) => {
-    // Prevent liking a thought that is already liked
-    if (processingLikes[id] || likedThoughts.includes(id)) return;
+    if (processingLikes[id]) return;
 
     setProcessingLikes((prev) => ({ ...prev, [id]: true }));
 
+    const isAlreadyLiked = likedThoughts.includes(id);
+    const action = isAlreadyLiked ? "remove" : "add";
+
     try {
-      await postData(
-        `https://happy-thoughts-ux7hkzgmwa-uc.a.run.app/thoughts/${id}/like`
+      await putData(
+        `https://project-happy-thoughts-api-kappa.vercel.app/thoughts/${id}/like`,
+        { action }
       );
 
-      // Update happyThoughts state to increment the likes count
       setHappyThoughts((prevThoughts) =>
-        prevThoughts.map((thought) =>
-          thought._id === id
-            ? { ...thought, hearts: thought.hearts + 1 }
-            : thought
-        )
+        prevThoughts.map((thought) => {
+          if (thought._id !== id) return thought;
+          // Adjust the hearts count based on the action
+          const updatedHearts =
+            action === "add"
+              ? thought.hearts + 1
+              : Math.max(thought.hearts - 1, 0);
+          return { ...thought, hearts: updatedHearts };
+        })
       );
 
-      // Update likedThoughts
-      setLikedThoughts((prevLiked) => [...prevLiked, id]);
+      // Update likedThoughts based on the action
+      setLikedThoughts((prevLiked) => {
+        if (action === "add") {
+          return [...prevLiked, id];
+        } else {
+          return prevLiked.filter((likedId) => likedId !== id);
+        }
+      });
     } catch (err) {
-      console.error("Failed to like the happy thought:", err);
+      console.error("Failed to update the happy thought:", err);
     } finally {
       setProcessingLikes((prev) => ({ ...prev, [id]: false }));
     }
@@ -93,6 +105,7 @@ export const App = () => {
         {happyThoughts.map((happyThought) => (
           <HappyThought
             key={happyThought._id}
+            id={happyThought._id}
             message={happyThought.message}
             likes={happyThought.hearts}
             timestamp={happyThought.createdAt}

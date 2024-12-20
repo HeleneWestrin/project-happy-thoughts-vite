@@ -16,7 +16,7 @@ export const CreateHappyThought = ({
   const { postData, isPosting } = usePost();
   const [isFocused, setIsFocused] = useState(false);
   const [error, setError] = useState(false);
-  const minLength = 4;
+  const minLength = 5;
   const maxLength = 140;
 
   const handleSubmit = async (e) => {
@@ -45,16 +45,26 @@ export const CreateHappyThought = ({
   };
 
   return (
-    <SkeletonTheme baseColor="#bbb" highlightColor="#ccc">
+    <SkeletonTheme
+      baseColor="#bbb"
+      highlightColor="#ccc"
+    >
       <div className="create-thought__container">
         <h1 className="create-thought__title">
           {isLoading ? (
-            <Skeleton containerClassName="flex-1" width="80" height="70" />
+            <Skeleton
+              containerClassName="flex-1"
+              width="80"
+              height="70"
+            />
           ) : (
             "Share a happy thought"
           )}
         </h1>
-        <form className="create-thought__form" onSubmit={handleSubmit}>
+        <form
+          className="create-thought__form"
+          onSubmit={handleSubmit}
+        >
           <label htmlFor="create-thought">
             {isLoading ? (
               <Skeleton height={18} />
@@ -95,7 +105,10 @@ export const CreateHappyThought = ({
           )}
 
           {isLoading ? (
-            <Skeleton width={50} containerClassName="skeleton-align-right" />
+            <Skeleton
+              width={50}
+              containerClassName="skeleton-align-right"
+            />
           ) : (
             <output
               className="create-thought__character-count"
@@ -112,7 +125,10 @@ export const CreateHappyThought = ({
               role="alert"
               aria-live="assertive"
             >
-              <img src={errorIcon} alt="" />
+              <img
+                src={errorIcon}
+                alt=""
+              />
               <p>{`Type at least ${minLength} characters.`}</p>
               {/* Writing it like this for screen readers to be able to read it as a sentence, instead of chopped up in three bits. */}
             </div>
@@ -128,7 +144,8 @@ export const CreateHappyThought = ({
             >
               {isPosting ? (
                 <>
-                  <IconLoading color="white" />
+                  <IconLoading color="white" />{" "}
+                  <span className="sr-only">Posting happy thought...</span>
                 </>
               ) : (
                 "Post happy thought"
