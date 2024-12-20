@@ -25,7 +25,7 @@ export const CreateHappyThought = ({
       try {
         // Send the post request
         const result = await postData(
-          "https://happy-thoughts-ux7hkzgmwa-uc.a.run.app/thoughts",
+          "https://project-happy-thoughts-api-kappa.vercel.app/thoughts",
           { message: thought }
         );
 
