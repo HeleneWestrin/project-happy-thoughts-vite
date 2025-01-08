@@ -6,4 +6,4 @@ Updated version of my Happy Thoughts project using my own Express API and MongoD
 
 ## View it live
 
-[See it live »](https://happy-thoughts-by-helene.netlify.app/)
+[See it live »](https://mongodb-api--happy-thoughts-by-helene.netlify.app/)
